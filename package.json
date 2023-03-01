@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "firebase": "^9.17.1",
+    "node-sass": "^8.0.0",
+    "react-router-dom": "^6.8.1",
+    "react-scripts": "^5.0.1",
+    "start": "webpack-dev-server --mode development"
+  }
+}
