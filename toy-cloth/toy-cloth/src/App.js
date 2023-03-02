@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {  Routes,  Route, BrowserRouter } from 'react-router-dom';
+import {  Routes,  Route} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import ShopPage from './pages/shop/shop.components.jsx';
 import HomePage from "./pages/homepage/homepage.component.jsx";
-import { auth, createUserProfileDocument } from './firebase/firebase.utils.js';
+import  { auth, createUserProfileDocument } from './firebase/firebase.utils.js';
 import Header from './components/header/header.component.jsx';
 
 import SignInAndSignUpPage from './pages/sign-in-and-sign-out/sign-in-and-sign-out.component.jsx';
@@ -12,9 +13,11 @@ import { setCurrentUser } from './redux/user/user.action.js';
 
  class App extends React.Component {
  
+ 
   unsubscribeFromAuth = null;
 
   componentDidMount(){
+    
     const {setCurrentUser}= this.props;
     this.unsubscribeFromAuth = auth.onAuthStateChanged( async userAuth=>  {
       if (userAuth){
@@ -52,22 +55,29 @@ import { setCurrentUser } from './redux/user/user.action.js';
   
    componentWillUnmount(){ this.unsubscribeFromAuth();}
   
-  
   render() {
     return( 
-    <BrowserRouter>
+      <div>
      <Header/>
        <Routes>
           <Route 
            path='/'  element={<HomePage/>} />
           <Route  path='/shop'  element ={<ShopPage/>} />
-          <Route  path='signin'  element ={<SignInAndSignUpPage/>} />
+          <Route exact  path='/signin'  element={this.props.currentUser ? <Navigate to='/'/> : <SignInAndSignUpPage/>}></Route>
           
         </Routes> 
-    </BrowserRouter>
+    
+    </div>
     )  
   };
 }
+
+ const mapStateToProps = ({user}) => {
+  return {
+    currentUser : user.currentUser
+  }
+ }
+
  const mapDispatchToProps = (dispatch) => {
   return {
     setCurrentUser: (user) => {
@@ -76,6 +86,6 @@ import { setCurrentUser } from './redux/user/user.action.js';
   }
  }
 
-export default connect(null, mapDispatchToProps)(App)
+export default connect(mapStateToProps, mapDispatchToProps)(App)
 
 //"terminal.integrated.automationProfile.linux": {},
