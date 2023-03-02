@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
 import {  Routes,  Route, BrowserRouter } from 'react-router-dom';
 import ShopPage from './pages/shop/shop.components.jsx';
 import HomePage from "./pages/homepage/homepage.component.jsx";
@@ -8,34 +8,33 @@ import Header from './components/header/header.component.jsx';
 
 import SignInAndSignUpPage from './pages/sign-in-and-sign-out/sign-in-and-sign-out.component.jsx';
 import {  onSnapshot } from 'firebase/firestore';
-
+import { setCurrentUser } from './redux/user/user.action.js';
 
  class App extends React.Component {
-  constructor(){
-    super();
-    this.state = {
-      currentUser: null
-    }
-  }  
+ 
   unsubscribeFromAuth = null;
 
   componentDidMount(){
+    const {setCurrentUser}= this.props;
     this.unsubscribeFromAuth = auth.onAuthStateChanged( async userAuth=>  {
       if (userAuth){
          const userRef = await createUserProfileDocument(userAuth);
          
+
        onSnapshot(userRef, (doc)=> {
-        this.setState({
+        setCurrentUser({
           currentUser : {
             id : doc.id,
             ...doc
               
           }
-        }, ()=> {
-         // console.log(this.state); 
-        })
+        }
+        // ()=> {
+        //  // console.log(this.state); 
+        // }
+        )
         
-        console.log(this.state);
+       // console.log(this.state);
        // console.log( 'value:', doc);
       });
         
@@ -46,7 +45,7 @@ import {  onSnapshot } from 'firebase/firestore';
         //  })
         
       } 
-      this.setState({currentUser: userAuth});
+        setCurrentUser(userAuth);
     });
     
   }
@@ -57,7 +56,7 @@ import {  onSnapshot } from 'firebase/firestore';
   render() {
     return( 
     <BrowserRouter>
-     <Header currentUser={this.state.currentUser}/>
+     <Header/>
        <Routes>
           <Route 
            path='/'  element={<HomePage/>} />
@@ -69,6 +68,14 @@ import {  onSnapshot } from 'firebase/firestore';
     )  
   };
 }
+ const mapDispatchToProps = (dispatch) => {
+  return {
+    setCurrentUser: (user) => {
+      dispatch(setCurrentUser(user))
+    }
+  }
+ }
 
-export default App;
+export default connect(null, mapDispatchToProps)(App)
+
 //"terminal.integrated.automationProfile.linux": {},
