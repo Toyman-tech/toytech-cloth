@@ -33,10 +33,11 @@
     }
   
     &.inverted {
-      background-color: white;
+      background-color: rgb(185, 170, 170);
       color: black;
       border: 1px solid black;
-  
+      
+      
       &:hover {
         background-color: black;
         color: white;
